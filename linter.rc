@@ -40,6 +40,7 @@ rules:
   octal-values: disable
   quoted-strings: disable
   comments: disable
+---
 EOT
     )"
     LINTER+=' $([ -f .yamllint* ] || echo "-c" "$CONFIG_TMP_FILE")'
@@ -52,13 +53,13 @@ EOT
 
   shfmt)
     PCRE_PAT='(\.sh|^\.?\w+\.?rc)$'
-    LINTER+=' -d -i 2 -ci ${FIXIT+-w}'
+    LINTER+=' -d -i 2 -ci ${LINTER_FIXIT+-w}'
     ;;
 
   clang-tidy)
     : "${XARGS_MAX_FILES:=16}"
     PCRE_PAT='\.(cc?|cpp|hh?)$'
-    LINTER+=' ${FIXIT+--warnings-as-errors="*" --fix --fix-errors} --format-style=file'
+    LINTER+=' ${LINTER_FIXIT+--warnings-as-errors="*" --fix --fix-errors}'
     ;;
 
   perl)
@@ -79,7 +80,7 @@ EOT
 
   black)
     PCRE_PAT='\.py$'
-    [[ -n "${FIXIT-}" ]] || LINTER+=' --check --diff --color'
+    [[ -n "${LINTER_FIXIT-}" ]] || LINTER+=' --check --diff --color'
     ;;
 
   tidy)
