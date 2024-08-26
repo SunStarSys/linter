@@ -8,7 +8,6 @@ case "$LINTER" in
     PCRE_PAT='\.ya?ml$'
     CONFIG_SRC="$(
       cat <<EOT
----
 yaml-files:
   - '*.yaml'
   - '*.yml'
@@ -40,7 +39,6 @@ rules:
   octal-values: disable
   quoted-strings: disable
   comments: disable
----
 EOT
     )"
     LINTER+=' $([ -f .yamllint* ] || echo "-c" "$CONFIG_TMP_FILE")'
@@ -214,7 +212,7 @@ EOT
   jinjalint)
     LINT_TEMPLATES=yes
     PCRE_PAT='/templates/|\.ya?ml$'
-    [[ -n "${LINTER_FIXIT-}" ]] || LINTER+=' ---parse-only'
+    [[ -n "${LINTER_FIXIT-}" ]] || LINTER+=' --parse-only'
     ;;
 
   lacheck)
