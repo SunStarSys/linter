@@ -10,7 +10,7 @@ RUN curl -L https://github.com/koalaman/shellcheck/releases/download/$SHELLCHECK
 RUN curl https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 ENV SHFMT_VERSION=v3.7.0
 RUN curl -L https://github.com/mvdan/sh/releases/download/$SHFMT_VERSION/shfmt_${SHFMT_VERSION}_linux_amd64 -o /usr/local/bin/shfmt && chmod +x /usr/local/bin/shfmt
-RUN pip3 install -U setuptools --break-system-packages && git clone https://github.com/joesuf4/jinjalint /tmp/jinjalint && (cd /tmp/jinjalint && python3 setup.py install)
+RUN pip3 install -U setuptools parsy --break-system-packages && git clone https://github.com/joesuf4/jinjalint /tmp/jinjalint && (cd /tmp/jinjalint && python3 setup.py install)
 #RUN adduser ubuntu && mkdir -p /home/ubuntu && chown ubuntu:ubuntu /home/ubuntu
 USER ubuntu
 RUN git clone https://github.com/asdf-vm/asdf.git /home/ubuntu/.asdf
@@ -32,6 +32,7 @@ ENV HADOLINT_VERSION=v2.10.0
 RUN curl -L https://github.com/hadolint/hadolint/releases/download/$HADOLINT_VERSION/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && chmod 0755 /usr/local/bin/hadolint
 RUN mkdir /src && chown ubuntu:ubuntu /src
 RUN apt-get install -y -qq texlive-full
+RUN chmod -R a+rx /usr/local/lib/python*/dist-packages
 USER ubuntu
 ENV USER=ubuntu
 RUN git config --global --add safe.directory /src
