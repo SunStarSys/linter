@@ -31,7 +31,7 @@ RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV HADOLINT_VERSION=v2.10.0
 RUN curl -L https://github.com/hadolint/hadolint/releases/download/$HADOLINT_VERSION/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && chmod 0755 /usr/local/bin/hadolint
 RUN mkdir /src && chown ubuntu:ubuntu /src
-RUN apt-get install -y -qq texlive-full
+#RUN apt-get install -y -qq texlive-full
 RUN chmod -R a+rx /usr/local/lib/python*/dist-packages
 USER ubuntu
 ENV USER=ubuntu
