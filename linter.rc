@@ -71,14 +71,9 @@ EOT
     PCRE_PAT='\.p[ml]$'
     ;;
 
-  flake8)
+  ruff)
     PCRE_PAT='\.py$'
-    LINTER+=' --select=E999,E902'
-    ;;
-
-  black)
-    PCRE_PAT='\.py$'
-    [[ -n "${LINTER_FIXIT-}" ]] || LINTER+=' --check --diff --color'
+    LINTER+=' check ${LINTER_FIXIT+--fix}'
     ;;
 
   tidy)
