@@ -37,4 +37,4 @@ USER ubuntu
 ENV USER=ubuntu
 RUN git config --global --add safe.directory /src
 WORKDIR /src
-ENTRYPOINT bash -c "grep '[)]\$' linter.rc | awk '{print \$1}' | cut -d')' -f1 |  xargs -P\$(nproc) -d'\n' -i bash -c '. ~/.asdf/asdf.sh; git diff --name-only \$(git show-branch --merge-base HEAD)~1 | LINTER={} bash linter.sh'"
+ENTRYPOINT bash -c "grep '[)]\$' linter.rc | awk '{print \$1}' | cut -d')' -f1 |  xargs -P\$(nproc) -d'\n' -i bash -c '. ~/.asdf/asdf.sh; git diff --name-only \$(git show-branch --merge-base \$BASE)~1 | LINTER={} bash linter.sh'"
