@@ -4,9 +4,11 @@ name: Linter
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [master]
+    branches:
+      - master
   pull_request:
-    branches: [master]
+    branches:
+      - master
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,8 +23,30 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # CI
-      - name: Run Linter
 
+      - name: Cache Docker Layers
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: /tmp/linter.tar
+          key: linter.tar
+
+      - name: Docker Build
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          git clone -b $GITHUB_REF_NAME https://github.com/$GITHUB_REPOSITORY .
-          LANG=en_US.UTF-8 docker run -t --rm -v $(pwd):/src:ro schaefj/linter
+          GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" gh repo clone SunStarSys/linter .
+          docker buildx build -t cleardemand/linter:latest .
+          docker save --output /tmp/linter.tar cleardemand/linter:latest
+          rm -rf * .??* >/dev/null 2>&1 || true
+
+      - name: Run Linter
+        run: |
+          IMAGE_ID="$(echo ${{ github.repository_owner }}/linter | tr '[A-Z]' '[a-z]'):latest"
+          docker load --input /tmp/linter.tar &
+          GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" gh repo clone ${GITHUB_REPOSITORY} .
+          git checkout ${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}
+          chmod 0777 .
+          echo loading $IMAGE_ID docker container ...
+          wait
+          echo executing linter ...
+          LANG=en_US.UTF-8 docker run -e BASE=refs/heads/${GITHUB_BASE_REF:-$GITHUB_REF_NAME} -t --rm -v $(pwd):/src ${IMAGE_ID}
