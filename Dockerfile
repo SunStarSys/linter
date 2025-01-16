@@ -5,12 +5,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/home/ubuntu
 RUN apt-get update -qq && apt-get upgrade -y -qq && apt-get install -y -qq locales curl ca-certificates net-tools zip make unzip zsh subversion git software-properties-common jq zlib1g-dev libsqlite3-dev python3-pip yamllint pylint tidy clang-tidy apache2-dev libapr1-dev libaprutil1-dev libapache2-mod-perl2 libapache2-mod-apreq2 libapache2-request-perl libsvn-perl git-svn lzop pdfgrep ansible-lint lacheck rustc cargo libbsd-dev libgsl-dev libx11-dev uuid-dev libpng-dev
 WORKDIR /tmp
-ENV SHELLCHECK_VERSION=v0.9.0
+ENV SHELLCHECK_VERSION=v0.10.0
 RUN curl -L https://github.com/koalaman/shellcheck/releases/download/$SHELLCHECK_VERSION/shellcheck-$SHELLCHECK_VERSION.linux.x86_64.tar.xz | tar -xJf - && mv shellcheck-$SHELLCHECK_VERSION/shellcheck /usr/local/bin
 RUN curl https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-ENV SHFMT_VERSION=v3.7.0
+ENV SHFMT_VERSION=v3.10.0
 RUN curl -L https://github.com/mvdan/sh/releases/download/$SHFMT_VERSION/shfmt_${SHFMT_VERSION}_linux_amd64 -o /usr/local/bin/shfmt && chmod +x /usr/local/bin/shfmt
-RUN pip3 install -U setuptools parsy --break-system-packages && git clone https://github.com/joesuf4/jinjalint /tmp/jinjalint && (cd /tmp/jinjalint && python3 setup.py install)
+RUN pip3 install -U setuptools parsy docopt --break-system-packages && git clone https://github.com/joesuf4/jinjalint /tmp/jinjalint && (cd /tmp/jinjalint && python3 setup.py install && sed -i -e "s/findall[\\(]'/findall(r'/g" -e "s/split[\\(]'/split(r'/g" /usr/local/lib/python3.12/dist-packages/docopt.py)
 #RUN adduser ubuntu && mkdir -p /home/ubuntu && chown ubuntu:ubuntu /home/ubuntu
 USER ubuntu
 RUN git clone https://github.com/asdf-vm/asdf.git /home/ubuntu/.asdf
