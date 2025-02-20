@@ -10,7 +10,7 @@ RUN curl -L https://github.com/koalaman/shellcheck/releases/download/$SHELLCHECK
 RUN curl https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 ENV SHFMT_VERSION=v3.10.0
 RUN curl -L https://github.com/mvdan/sh/releases/download/$SHFMT_VERSION/shfmt_${SHFMT_VERSION}_linux_amd64 -o /usr/local/bin/shfmt && chmod +x /usr/local/bin/shfmt
-RUN pip3 install -U setuptools parsy docopt --break-system-packages && git clone https://github.com/joesuf4/jinjalint /tmp/jinjalint && (cd /tmp/jinjalint && python3 setup.py install && sed -i -e "s/findall[\\(]'/findall(r'/g" -e "s/split[\\(]'/split(r'/g" /usr/local/lib/python3.12/dist-packages/docopt.py)
+RUN pip3 install -U setuptools parsy docopt pytest-tap --break-system-packages && git clone https://github.com/joesuf4/jinjalint /tmp/jinjalint && (cd /tmp/jinjalint && python3 setup.py install && sed -i -e "s/findall[\\(]'/findall(r'/g" -e "s/split[\\(]'/split(r'/g" /usr/local/lib/python3.12/dist-packages/docopt.py)
 #RUN adduser ubuntu && mkdir -p /home/ubuntu && chown ubuntu:ubuntu /home/ubuntu
 USER ubuntu
 RUN git clone https://github.com/asdf-vm/asdf.git /home/ubuntu/.asdf
@@ -20,6 +20,7 @@ RUN bash -c '. ~/.asdf/asdf.sh; mkdir -p ~ubuntu/bin; echo -e "#!/bin/bash\nexec
 RUN bash -c '. ~/.asdf/asdf.sh; . ~/.asdf/plugins/dotnet-core/set-dotnet-home.bash; dotnet tool install -g dotnet-format --version "7.*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json'
 USER root
 RUN pip3 install flake8 black ruff --break-system-packages
+RUN cpan -f Test::Harness2
 #RUN cpan -f install sealed Algorithm::Diff LCS::BV LCS::XS B::Lint IO::Select URI Term::ReadKey Perl::Critic YAML::XS HTML::Escape Cpanel::JSON::XS URI::Escape Digest::SHA1 FreezeThaw Dotiac::DTL::Addon::markup Time::timegm
 USER ubuntu
 RUN bash -c '. ~/.asdf/asdf.sh; npm config set strict-ssl false && npm install -g eslint typescript navigator jsdom jquery @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-node stylelint stylelint-config-standard postcss-lit postcss-scss postcss-markdown postcss-html postcss-js remark remark-cli remark-lint-maximum-line-length remark-lint-ordered-list-marker-value remark-message-control remark-preset-lint-consistent remark-lint-list-item-indent remark-validate-links remark-preset-lint-recommended remark-preset-lint-markdown-style-guide'
