@@ -14,7 +14,7 @@ RUN pip3 install -U setuptools parsy docopt pytest-tap --break-system-packages &
 #RUN adduser ubuntu && mkdir -p /home/ubuntu && chown ubuntu:ubuntu /home/ubuntu
 USER ubuntu
 RUN git clone https://github.com/asdf-vm/asdf.git /home/ubuntu/.asdf
-ENV PATH="$HOME/bin:$PATH:$HOME/.dotnet/tools"
+ENV PATH="$HOME/bin:/usr/local/bin:$PATH:$HOME/.dotnet/tools"
 ENV NODE_VERSION=22.4.1
 RUN bash -c '. ~/.asdf/asdf.sh; mkdir -p ~ubuntu/bin; echo -e "#!/bin/bash\nexec /usr/bin/curl -k \$@" > ~/bin/curl; chmod +x ~/bin/curl; for pkg in dotnet-core golangci-lint; do asdf plugin-add $pkg; v="$(asdf list-all $pkg | tail -n 1)"; asdf install $pkg $v; echo $pkg $v >>~/.tool-versions; done; asdf plugin-add nodejs && asdf install nodejs $NODE_VERSION && echo nodejs $NODE_VERSION >>~/.tool-versions'
 RUN bash -c '. ~/.asdf/asdf.sh; . ~/.asdf/plugins/dotnet-core/set-dotnet-home.bash; dotnet tool install -g dotnet-format --version "7.*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json'
