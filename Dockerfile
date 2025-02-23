@@ -16,8 +16,8 @@ ENV ASDF_VERSION=v0.16.4
 RUN curl -L https://github.com/asdf-vm/asdf/releases/download/$ASDF_VERSION/asdf-$ASDF_VERSION-linux-amd64.tar.gz | tar -xzf - && mv asdf /usr/local/bin && chmod +x /usr/local/bin/asdf
 USER ubuntu
 ENV ASDF_DATA_DIR="$HOME/.asdf"
-ENV PATH="$HOME/bin:$ASDF_DATA_DIR/shims:/usr/local/bin:$PATH:$HOME/.dotnet/tools"
-ENV NODE_VERSION=22.4.1
+ENV NODE_VERSION=23.7.0
+ENV PATH="$HOME/bin:$ASDF_DATA_DIR/shims:$(asdf where nodejs)/bin:/usr/local/bin:$PATH:$HOME/.dotnet/tools"
 RUN bash -c 'mkdir -p ~ubuntu/bin; echo -e "#!/bin/bash\nexec /usr/bin/curl -k \$@" > ~/bin/curl; chmod +x ~/bin/curl; for pkg in dotnet-core golangci-lint; do asdf plugin add $pkg; v=$(asdf list all $pkg | tail -n 2 | head -n 1); asdf install $pkg $v; echo $pkg $v >>~/.tool-versions; done; asdf plugin add nodejs && asdf install nodejs $NODE_VERSION && echo nodejs $NODE_VERSION >>~/.tool-versions'
 RUN bash -c 'dotnet tool install -g dotnet-format --version "7.*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json'
 USER root
