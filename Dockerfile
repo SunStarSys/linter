@@ -17,7 +17,7 @@ RUN curl -L https://github.com/asdf-vm/asdf/releases/download/$ASDF_VERSION/asdf
 USER ubuntu
 ENV ASDF_DATA_DIR="$HOME/.asdf"
 ENV NODE_VERSION=23.7.0
-ENV PATH="$HOME/bin:$ASDF_DATA_DIR/shims:$(asdf where nodejs)/bin:/usr/local/bin:$PATH:$HOME/.dotnet/tools"
+ENV PATH="$HOME/bin:$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/installs/nodejs/$NODE_VERSION/bin:/usr/local/bin:$PATH:$HOME/.dotnet/tools"
 RUN bash -c 'mkdir -p ~ubuntu/bin; echo -e "#!/bin/bash\nexec /usr/bin/curl -k \$@" > ~/bin/curl; chmod +x ~/bin/curl; for pkg in dotnet-core golangci-lint; do asdf plugin add $pkg; v=$(asdf list all $pkg | tail -n 2 | head -n 1); asdf install $pkg $v; echo $pkg $v >>~/.tool-versions; done; asdf plugin add nodejs && asdf install nodejs $NODE_VERSION && echo nodejs $NODE_VERSION >>~/.tool-versions'
 RUN bash -c 'dotnet tool install -g dotnet-format --version "7.*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json'
 USER root
@@ -26,6 +26,7 @@ RUN cpan -f install Test2::Harness
 RUN pip3 install flake8 black ruff pandas cffi --break-system-packages
 USER ubuntu
 RUN bash -c 'npm config set strict-ssl false && npm install -g eslint typescript navigator jsdom jquery @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-node stylelint stylelint-config-standard postcss-lit postcss-scss postcss-markdown postcss-html postcss-js remark remark-cli remark-lint-maximum-line-length remark-lint-ordered-list-marker-value remark-message-control remark-preset-lint-consistent remark-lint-list-item-indent remark-validate-links remark-preset-lint-recommended remark-preset-lint-markdown-style-guide'
+RUN which remark
 USER root
 ENV NODE_PATH=node_modules:$HOME/.asdf/installs/nodejs/$NODE_VERSION/lib/node_modules
 ENV TERM=xterm-256color

@@ -1,6 +1,6 @@
 FROM schaefj/linter:latest
 USER root
-RUN apt-get install -y -qq gh
+RUN apt-get install -y -qq gh htop bpftrace
 USER ubuntu
 ENV USER=ubuntu
 ENTRYPOINT ./run.sh
