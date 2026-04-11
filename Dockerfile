@@ -3,7 +3,7 @@ USER root
 ENV TZ=America/NewYork
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/home/ubuntu
-RUN apt-get update -qq && apt-get upgrade -y -qq && apt-get install -y -qq locales curl ca-certificates net-tools zip make unzip zsh subversion git software-properties-common jq zlib1g-dev libsqlite3-dev python3-pip yamllint pylint tidy clang-tidy apache2-dev libapr1-dev libaprutil1-dev libapache2-mod-perl2 libapache2-mod-apreq2 libapache2-request-perl libsvn-perl git-svn lzop pdfgrep ansible-lint lacheck rustc cargo libbsd-dev libgsl-dev libx11-dev uuid-dev libpng-dev
+RUN apt-get update -qq && apt-get upgrade -y -qq && apt-get install -y -qq locales curl ca-certificates net-tools zip make unzip zsh subversion git software-properties-common jq zlib1g-dev libsqlite3-dev python3-pip yamllint pylint tidy clang-tidy apache2 apache2-dev libapr1-dev libaprutil1-dev libapache2-mod-perl2 libapache2-mod-apreq2 libapache2-request-perl libsvn-perl git-svn lzop pdfgrep ansible-lint lacheck rustc cargo libbsd-dev libgsl-dev libx11-dev uuid-dev libpng-dev
 WORKDIR /tmp
 ENV SHELLCHECK_VERSION=v0.10.0
 RUN curl -L https://github.com/koalaman/shellcheck/releases/download/$SHELLCHECK_VERSION/shellcheck-$SHELLCHECK_VERSION.linux.x86_64.tar.xz | tar -xJf - && mv shellcheck-$SHELLCHECK_VERSION/shellcheck /usr/local/bin
@@ -22,7 +22,7 @@ RUN bash -c 'mkdir -p ~ubuntu/bin; echo -e "#!/bin/bash\nexec /usr/bin/curl -k \
 RUN bash -c 'dotnet tool install -g dotnet-format --version "7.*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json'
 USER root
 RUN cpan -f install Test2::Harness
-#RUN cpan -f install sealed Algorithm::Diff LCS::BV LCS::XS B::Lint IO::Select URI Term::ReadKey Perl::Critic YAML::XS HTML::Escape Cpanel::JSON::XS URI::Escape Digest::SHA1 FreezeThaw Dotiac::DTL::Addon::markup Time::timegm
+RUN cpan -f install sealed Algorithm::Diff LCS::BV LCS::XS B::Lint IO::Select URI Term::ReadKey Perl::Critic YAML::XS HTML::Escape Cpanel::JSON::XS URI::Escape Digest::SHA1 FreezeThaw Dotiac::DTL::Addon::markup Time::timegm
 RUN pip3 install flake8 black ruff pandas cffi --break-system-packages
 USER ubuntu
 RUN bash -c 'npm config set strict-ssl false && npm install -g eslint typescript navigator jsdom jquery @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-node stylelint stylelint-config-standard postcss-lit postcss-scss postcss-markdown postcss-html postcss-js remark remark-cli remark-lint-maximum-line-length remark-lint-ordered-list-marker-value remark-message-control remark-preset-lint-consistent remark-lint-list-item-indent remark-validate-links remark-preset-lint-recommended remark-preset-lint-markdown-style-guide'
@@ -35,8 +35,19 @@ RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV HADOLINT_VERSION=v2.10.0
 RUN curl -L https://github.com/hadolint/hadolint/releases/download/$HADOLINT_VERSION/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && chmod 0755 /usr/local/bin/hadolint
 RUN mkdir /src && chown ubuntu:ubuntu /src
-#RUN apt-get install -y -qq texlive-full
+RUN apt-get install -y -qq texlive-full
 RUN chmod -R a+rx /usr/local/lib/python*/dist-packages
+RUN chmod u+w /etc/apache2/mods-available/mime.conf
+RUN sed -i -e 's/AddType/#AddType/g' /etc/apache2/mods-available/mime.conf
+RUN sed -i -e 's/#AddEncoding/AddEncoding/g' /etc/apache2/mods-available/mime.conf
+RUN echo "AddType text/plain .tex .tt .bib .bbl .yml .yaml .asy .pl .pm .py" >> /etc/apache2/mods-available/mime.conf
+RUN echo "AddType text/html .md .mmd .mdtext" >> /etc/apache2/mods-available/mime.conf
+RUN echo "AddType text/javascript .js" >> /etc/apache2/mods-available/mime.conf
+RUN echo "AddType application/json .json" >> /etc/apache2/mods-available/mime.conf
+RUN echo "AddType text/css .css" >> /etc/apache2/mods-available/mime.conf
+RUN a2enmod headers
+RUN a2enmod include
+RUN a2enmod http2
 USER ubuntu
 ENV USER=ubuntu
 RUN git config --global --add safe.directory /src
