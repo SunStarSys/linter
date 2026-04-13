@@ -67,10 +67,6 @@ EOT
     LINTER+=' -T -I. -Iblib/lib -Ilib -Ilib/perl5 -c 3<&0'
     ;;
 
-  perlcritic)
-    PCRE_PAT='\.p[ml]$'
-    ;;
-
   ruff)
     PCRE_PAT='\.py$'
     LINTER+=' check ${LINTER_FIXIT+--fix}'
