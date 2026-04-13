@@ -35,13 +35,13 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" gh repo clone SunStarSys/linter .
-          docker buildx build -t cleardemand/linter:latest .
-          docker save --output /tmp/linter.tar cleardemand/linter:latest
+          docker buildx build -t localhost/linter:latest .
+          docker save --output /tmp/linter.tar localhost/linter:latest
           rm -rf * .??* >/dev/null 2>&1 || true
 
       - name: Run Linter
         run: |
-          IMAGE_ID="$(echo ${{ github.repository_owner }}/linter | tr '[A-Z]' '[a-z]'):latest"
+          IMAGE_ID="localhost/linter:latest"
           docker load --input /tmp/linter.tar &
           GH_TOKEN="${{ secrets.GITHUB_TOKEN }}" gh repo clone ${GITHUB_REPOSITORY} .
           git checkout ${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}
