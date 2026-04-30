@@ -48,6 +48,7 @@ RUN echo "AddType text/css .css" >> /etc/apache2/mods-available/mime.conf
 RUN a2enmod headers
 RUN a2enmod include
 RUN a2enmod http2
+RUN mkdir -p /x1/cms && ln -s /src /x1/cms/build
 USER ubuntu
 ENV USER=ubuntu
 RUN git config --global --add safe.directory /src
